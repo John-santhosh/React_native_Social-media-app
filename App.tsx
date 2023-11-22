@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
+  FlatList,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -11,8 +12,66 @@ import {getFontFamily} from './assets/fonts/helper';
 import Title from './components/title/Title';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
+import UserStories from './components/userStory/UserStories';
 
-function App(): JSX.Element {
+// types
+export type UserStoryType = {
+  firstName: string;
+  id: number;
+  // need to look for this
+  profileImage: any;
+};
+
+// component
+function App() {
+  const userStories: UserStoryType[] = [
+    {
+      firstName: 'Joseph',
+      id: 1,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Angel',
+      id: 2,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'White',
+      id: 3,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Oliver',
+      id: 4,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Nata',
+      id: 5,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Nicholas',
+      id: 6,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Adam',
+      id: 7,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Nova',
+      id: 8,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+    {
+      firstName: 'Nielson',
+      id: 9,
+      profileImage: require('./assets/images/default_profile.png'),
+    },
+  ];
+
   return (
     <SafeAreaView>
       <View style={[style.pageSpacing, style.title]}>
@@ -28,6 +87,17 @@ function App(): JSX.Element {
             <Text style={style.messageCountText}>2</Text>
           </View>
         </TouchableOpacity>
+      </View>
+      <View style={style.userStoryContainer}>
+        <FlatList
+          data={userStories}
+          // keyExtractor={item => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item}) => {
+            return <UserStories {...item} />;
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -67,8 +137,6 @@ export const style = StyleSheet.create({
     height: 10,
     justifyContent: 'center',
     flexDirection: 'row',
-    // paddingHorizontal: 3,
-    // paddingVertical: 2,
   },
   messageCountText: {
     color: '#fff',
@@ -78,5 +146,12 @@ export const style = StyleSheet.create({
   fontFam: {
     fontFamily: getFontFamily('900'),
     fontSize: 50,
+  },
+
+  // stories
+
+  userStoryContainer: {
+    marginTop: 28,
+    marginHorizontal: 28,
   },
 });
