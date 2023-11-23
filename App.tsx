@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,12 +7,16 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
+  Switch,
+  StatusBar,
 } from 'react-native';
 import {getFontFamily} from './assets/fonts/helper';
 import Title from './components/title/Title';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faEnvelope} from '@fortawesome/free-solid-svg-icons';
 import UserStories from './components/userStory/UserStories';
+import UserPost from './components/userPost/UserPost';
 
 // types
 export type UserStoryType = {
@@ -22,6 +26,17 @@ export type UserStoryType = {
   profileImage: any;
 };
 
+export type UserPostType = {
+  firstName: string;
+  lastName: string;
+  location: string;
+  likes: number;
+  comments: number;
+  bookMarks: number;
+  image: any;
+  id: number;
+  userProfileImage: any;
+};
 // component
 function App() {
   const userStories: UserStoryType[] = [
@@ -29,7 +44,7 @@ function App() {
       firstName: 'Joseph',
       id: 1,
       profileImage: require('./assets/images/default_profile.png'),
-    },
+    }, // 0
     {
       firstName: 'Angel',
       id: 2,
@@ -49,7 +64,7 @@ function App() {
       firstName: 'Nata',
       id: 5,
       profileImage: require('./assets/images/default_profile.png'),
-    },
+    }, // 4
     {
       firstName: 'Nicholas',
       id: 6,
@@ -69,36 +84,236 @@ function App() {
       firstName: 'Nielson',
       id: 9,
       profileImage: require('./assets/images/default_profile.png'),
+    }, // 8
+  ];
+
+  const userPost: UserPostType[] = [
+    {
+      firstName: 'John',
+      lastName: 'santhosh',
+      location: 'Sukabumi, Jawa Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      image: require('./assets/images/default_profile.png'),
+      userProfileImage: require('./assets/images/default_post.png'),
+      id: 1,
+    },
+    {
+      firstName: 'John',
+      lastName: 'santhosh',
+      location: 'Chennai',
+      likes: 1201,
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      comments: 24,
+      bookMarks: 55,
+      id: 2,
+    },
+    {
+      firstName: 'John',
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      lastName: 'santhosh',
+      location: 'Pondok Leungsir, Jawa Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      id: 3,
+    },
+    {
+      firstName: 'John',
+      lastName: 'santhosh',
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      location: 'Sukabumi, Jawa Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      id: 4,
+    },
+    {
+      firstName: 'John',
+      lastName: 'santhosh',
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      location: 'Pondok Leungsir, Jawa Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      id: 5,
+    },
+    {
+      firstName: 'Smith',
+      lastName: 'D',
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      location: 'Pondok z, M Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      id: 6,
+    },
+    {
+      firstName: 'John',
+      lastName: 'santhosh',
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      location: 'Pondok Leungsir, Jawa Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      id: 7,
+    },
+    {
+      firstName: 'Smith',
+      lastName: 'D',
+      userProfileImage: require('./assets/images/default_post.png'),
+      image: require('./assets/images/default_profile.png'),
+      location: 'Pondok z, M Barat',
+      likes: 1201,
+      comments: 24,
+      bookMarks: 55,
+      id: 8,
     },
   ];
 
+  const userStoriesPageSize = 4;
+  const [userStoriesCurrentPage, setUserStoriesCurrentPage] = useState(1);
+  const [userStoriesRenderData, setUserStoriesRenderData] = useState([]);
+  const [isLoadingUserStories, setIsLoadingUserStories] = useState(false);
+
+  const userPostPageSize = 2;
+  const [userPostCurrentPage, setUserPostCurrentPage] = useState(1);
+  const [userPostRenderData, setUserPostRenderData] = useState([]);
+  const [isLoadingUserPost, setIsLoadingUserPost] = useState(false);
+
+  const [isOn, setIsOn] = useState(false);
+
+  console.log({Platform});
+
+  const pagination = (
+    dataBase: any[],
+    currentPage: number,
+    pageSize: number,
+  ) => {
+    console.log('currentPage' + currentPage);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    // console.log({startIndex});
+
+    if (startIndex >= dataBase.length) {
+      return [];
+    }
+    // console.log({data: dataBase.slice(startIndex, endIndex)});
+
+    return dataBase.slice(startIndex, endIndex);
+  };
+
+  useEffect(() => {
+    setIsLoadingUserStories(true);
+    const getInitialData = pagination(userStories, 1, userStoriesPageSize);
+    setUserStoriesRenderData(getInitialData);
+    setIsLoadingUserStories(false);
+
+    // setUser
+    setIsLoadingUserPost(true);
+    const getInitialDataPost = pagination(userPost, 1, userPostPageSize);
+    setUserPostRenderData(getInitialDataPost);
+    setIsLoadingUserPost(false);
+  }, []);
+
   return (
     <SafeAreaView>
-      <View style={[style.pageSpacing, style.title]}>
-        <Title title="Let's Explore" />
-        {/* <View style={style.titleIcon}> */}
-        <TouchableOpacity style={style.buttonStyle}>
-          <FontAwesomeIcon
-            icon={faEnvelope}
-            color={'#898DAE'}
-            style={{width: 25, height: 20}}
-          />
-          <View style={style.messageCount}>
-            <Text style={style.messageCountText}>2</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={style.userStoryContainer}>
-        <FlatList
-          data={userStories}
-          // keyExtractor={item => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item}) => {
-            return <UserStories {...item} />;
-          }}
-        />
-      </View>
+      {/* <View> */}
+      {/* <StatusBar backgroundColor={'transparent'} barStyle={'dark-content'} /> */}
+      <FlatList
+        // contentContainerStyle={{backgroundColor: 'red'}}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          if (isLoadingUserPost) {
+            return;
+          }
+          setIsLoadingUserPost(true);
+          console.log('fetch more data', userPostCurrentPage + 1);
+
+          const contentToAppend = pagination(
+            userPost,
+            userPostCurrentPage + 1,
+            userPostPageSize,
+          );
+          if (contentToAppend.length > 0) {
+            setUserPostCurrentPage(userPostCurrentPage + 1);
+            setUserPostRenderData(prev => [...prev, ...contentToAppend]);
+          }
+          setIsLoadingUserPost(false);
+        }}
+        ListHeaderComponent={
+          <>
+            <View style={[style.pageSpacing, style.title]}>
+              <Title title="Let's Explore" />
+              {/* <View style={style.titleIcon}> */}
+              <TouchableOpacity style={style.buttonStyle}>
+                <FontAwesomeIcon icon={faEnvelope} color={'#898DAE'} />
+                <View style={style.messageCount}>
+                  <Text style={style.messageCountText}>2</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+              }}>
+              <Switch
+                value={isOn}
+                onValueChange={value => setIsOn(value)}
+                style={
+                  Platform.OS === 'android' && {
+                    transform: [{scaleX: 1.5}, {scaleY: 1.5}],
+                  }
+                }
+              />
+            </View>
+            <View style={style.userStoryContainer}>
+              <FlatList
+                onEndReachedThreshold={0.5}
+                onEndReached={() => {
+                  if (isLoadingUserStories) {
+                    return;
+                  }
+                  setIsLoadingUserStories(true);
+                  const contentToAppend = pagination(
+                    userStories,
+                    userStoriesCurrentPage + 1,
+                    userStoriesPageSize,
+                  );
+                  if (contentToAppend.length > 0) {
+                    setUserStoriesCurrentPage(userStoriesCurrentPage + 1);
+                    setUserStoriesRenderData(prev => [
+                      ...prev,
+                      ...contentToAppend,
+                    ]);
+                  }
+                  setIsLoadingUserStories(false);
+                }}
+                data={userStoriesRenderData}
+                // keyExtractor={item => item.id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                renderItem={({item}) => {
+                  return <UserStories key={'userStory' + item.id} {...item} />;
+                }}
+              />
+            </View>
+          </>
+        }
+        data={userPostRenderData}
+        renderItem={({item}) => <UserPost {...item} />}
+        showsVerticalScrollIndicator={false}
+      />
+      {/* </View> */}
     </SafeAreaView>
   );
 }

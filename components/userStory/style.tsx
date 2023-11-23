@@ -1,9 +1,14 @@
 import {StyleSheet} from 'react-native';
 import {getFontFamily} from '../../assets/fonts/helper';
+import {
+  horizontalScale,
+  scaleFontSize,
+  verticalScale,
+} from '../../assets/styles/scaling';
 
 const style = StyleSheet.create({
   storyContainer: {
-    marginRight: 20,
+    marginRight: horizontalScale(14),
   },
   userImageContainer: {
     borderColor: '#F35BAC',
@@ -14,9 +19,9 @@ const style = StyleSheet.create({
   image: {},
   firstName: {
     color: '#022150',
-    fontSize: 14,
+    fontSize: scaleFontSize(14),
     fontFamily: getFontFamily('500'),
-    marginTop: 10,
+    marginTop: verticalScale(10),
     textAlign: 'center',
   },
 });
